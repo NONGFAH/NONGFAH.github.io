@@ -1,10 +1,10 @@
 ---
 layout:     post
-title:      spring-BeanFactoy初始化流程
-subtitle:   本文为 Spring 源码阅读中的一节，主要记录了 spring 启动过程中的 beanFactory 初始化过程
+title:      spring-BeanFactory创建过程
+subtitle:   本文为 Spring 源码阅读中的一节，主要记录了 spring 启动过程中的 beanFactory 创建过程
 date:       2019-07-09
 author:     NONGFAH
-header-img: img/post-bg-mma-2.png
+header-img: img/post-bg-mma-2.jpg
 catalog: true
 tags:
     - Spring
@@ -13,7 +13,7 @@ tags:
 
 # spring 源码解析
 
-## BeanFactoy 初始化流程
+## BeanFactory 的创建阶段
 
 ### 示例代码
 
@@ -45,8 +45,7 @@ public void say() {
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans.xsd">
-    
+        http://www.springframework.org/schema/beans/spring-beans.xsd">    
     <bean id="app" class="com.mycompany.app.App"></bean>
 </beans>
 ```
@@ -67,7 +66,7 @@ public void say() {
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <spring.version>4.1.3.RELEASE</spring.version>
+    <spring.version>5.0.0.RELEASE</spring.version>
   </properties>
 
   <dependencies>
@@ -82,44 +81,12 @@ public void say() {
       <artifactId>spring-core</artifactId>
       <version>${spring.version}</version>
     </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-tx</artifactId>
-      <version>${spring.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-web</artifactId>
-      <version>${spring.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-context-support</artifactId>
-      <version>${spring.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-webmvc</artifactId>
-      <version>${spring.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-jdbc</artifactId>
-      <version>${spring.version}</version>
-    </dependency>
-  </dependencies>
-
 </project>
 ```
 
 ### 开始
 
-![示例程序](img/1565926459861.png)
+![示例程序](http://nongfah.github.io/img/1565926459861.png)
 
 14行创建 ClassPathXmlApplicationContext 实例打断点。
 
@@ -157,7 +124,7 @@ public void refresh() throws BeansException, IllegalStateException {
 			// 准备上下文进行刷新，准备工作包括设置启动时间，是否激活标识位，初始化属性源(property source)配置
 			prepareRefresh();
 			//  本次分析的重点 创建beanFactory
-            //（过程是根据xml为每个bean生成BeanDefinition并注册到生成的beanFactory）
+            //（过程是根据 xml 为每个 bean 生成 BeanDefinition 并注册到生成的 beanFactory 的 beanDefinitionMap 中）
 ----------->ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
            	// 其他代码.....
 }
@@ -167,7 +134,7 @@ public void refresh() throws BeansException, IllegalStateException {
 
 ```java
 protected ConfigurableListableBeanFactory obtainFreshBeanFactory() {
-    // 刷新 beanfactory
+    // 刷新 beanFactory
 --->refreshBeanFactory();
 	ConfigurableListableBeanFactory beanFactory = getBeanFactory();
 	if (logger.isDebugEnabled()) {
@@ -207,7 +174,7 @@ protected final void refreshBeanFactory() throws BeansException {
 }
 ```
 
-#####  6.loadBeanDefinitions()
+#####  6.loadBeanDefinitions(DefaultListableBeanFactory beanFactory)
 
 ```java
 protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) throws BeansException, IOException {
@@ -223,7 +190,7 @@ protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) throw
 }
 ```
 
-#####  7.loadBeanDefinitions()
+#####  7.loadBeanDefinitions(XmlBeanDefinitionReader reader)
 
 ```java
 protected void loadBeanDefinitions(XmlBeanDefinitionReader reader) throws BeansException, IOException {
@@ -242,7 +209,7 @@ protected void loadBeanDefinitions(XmlBeanDefinitionReader reader) throws BeansE
 }
 ```
 
-##### 8.loadBeanDefinitions()
+##### 8.loadBeanDefinitions(String... locations)
 
 ```java
 public int loadBeanDefinitions(String... locations) throws BeanDefinitionStoreException {
@@ -256,7 +223,7 @@ public int loadBeanDefinitions(String... locations) throws BeanDefinitionStoreEx
 }
 ```
 
-##### 9.loadBeanDefinitions()
+##### 9.loadBeanDefinitions(String location)
 
 ```java
 public int loadBeanDefinitions(String location) throws BeanDefinitionStoreException {
@@ -264,7 +231,7 @@ public int loadBeanDefinitions(String location) throws BeanDefinitionStoreExcept
 }
 ```
 
-##### 10.loadBeanDefinitions()
+##### 10.loadBeanDefinitions(String location, @Nullable Set<Resource> actualResources)
 
 ```java
 public int loadBeanDefinitions(String location, @Nullable Set<Resource> actualResources) throws BeanDefinitionStoreException {
@@ -308,7 +275,7 @@ public int loadBeanDefinitions(String location, @Nullable Set<Resource> actualRe
 }
 ```
 
-##### 11.loadBeanDefinitions()
+##### 11.loadBeanDefinitions(Resource... resources)
 
 ```java
 public int loadBeanDefinitions(Resource... resources) throws BeanDefinitionStoreException {
@@ -322,7 +289,7 @@ public int loadBeanDefinitions(Resource... resources) throws BeanDefinitionStore
 }
 ```
 
-##### 12.loadBeanDefinitions()
+##### 12.loadBeanDefinitions(Resource resource)
 
 ```java
 public int loadBeanDefinitions(Resource resource) throws BeanDefinitionStoreException {
@@ -331,7 +298,7 @@ public int loadBeanDefinitions(Resource resource) throws BeanDefinitionStoreExce
 }
 ```
 
-##### 13.loadBeanDefinitions()
+##### 13.loadBeanDefinitions(EncodedResource encodedResource)
 
 ```java
 public int loadBeanDefinitions(EncodedResource encodedResource) throws BeanDefinitionStoreException {
@@ -355,7 +322,7 @@ public int loadBeanDefinitions(EncodedResource encodedResource) throws BeanDefin
 			if (encodedResource.getEncoding() != null) {
 				inputSource.setEncoding(encodedResource.getEncoding());
 			}
-            // 从指定的流中加载 bean 定义
+            // 加载 bean 定义
 ------->return doLoadBeanDefinitions(inputSource, encodedResource.getResource());
 		}
 		finally {
@@ -375,7 +342,7 @@ public int loadBeanDefinitions(EncodedResource encodedResource) throws BeanDefin
 }
 ```
 
-##### 14.doLoadBeanDefinitions()
+##### 14.doLoadBeanDefinitions(InputSource inputSource, Resource resource)
 
 ```java
 protected int doLoadBeanDefinitions(InputSource inputSource, Resource resource)
@@ -416,7 +383,7 @@ protected int doLoadBeanDefinitions(InputSource inputSource, Resource resource)
 }
 ```
 
-##### 15.registerBeanDefinitions()
+##### 15.registerBeanDefinitions(Document doc, Resource resource)
 
 ```java
 public int registerBeanDefinitions(Document doc, Resource resource) throws BeanDefinitionStoreException {
@@ -428,7 +395,7 @@ public int registerBeanDefinitions(Document doc, Resource resource) throws BeanD
 }
 ```
 
-##### 16.registerBeanDefinitions()
+##### 16.registerBeanDefinitions(Document doc, XmlReaderContext readerContext)
 
 ```java
 public void registerBeanDefinitions(Document doc, XmlReaderContext readerContext) {
@@ -440,7 +407,7 @@ public void registerBeanDefinitions(Document doc, XmlReaderContext readerContext
 
 ​    
 
-##### 17.doRegisterBeanDefinitions()
+##### 17.doRegisterBeanDefinitions(Element root, BeanDefinitionParserDelegate delegate)
 
 ```java
 protected void parseBeanDefinitions(Element root, BeanDefinitionParserDelegate delegate) {
@@ -466,7 +433,7 @@ protected void parseBeanDefinitions(Element root, BeanDefinitionParserDelegate d
 }
 ```
 
-##### 18.parseDefaultElement()
+##### 18.parseDefaultElement(Element ele, BeanDefinitionParserDelegate delegate)
 
 ```java
 private void parseDefaultElement(Element ele, BeanDefinitionParserDelegate delegate) {
@@ -488,7 +455,7 @@ private void parseDefaultElement(Element ele, BeanDefinitionParserDelegate deleg
 }
 ```
 
-##### 19.processBeanDefinition()
+##### 19.processBeanDefinition(Element ele, BeanDefinitionParserDelegate delegate)
 
 ```java
 protected void processBeanDefinition(Element ele, BeanDefinitionParserDelegate delegate) {
@@ -509,11 +476,10 @@ protected void processBeanDefinition(Element ele, BeanDefinitionParserDelegate d
 }
 ```
 
-##### 20.registerBeanDefinition()
+##### 20.registerBeanDefinition(BeanDefinitionHolder definitionHolder, BeanDefinitionRegistry registry)
 
 ```java
-public static void registerBeanDefinition(
-		BeanDefinitionHolder definitionHolder, BeanDefinitionRegistry registry)
+public static void registerBeanDefinition(BeanDefinitionHolder definitionHolder, BeanDefinitionRegistry registry)
 		throws BeanDefinitionStoreException {
 	// 在主名称（真实名字，区别于别名）下注册bean定义
 	String beanName = definitionHolder.getBeanName();
@@ -528,7 +494,7 @@ public static void registerBeanDefinition(
 }
 ```
 
-##### 21.registerBeanDefinition()
+##### 21.registerBeanDefinition(String beanName, BeanDefinition beanDefinition)
 
 ```java
 @Override
@@ -608,3 +574,8 @@ public void registerBeanDefinition(String beanName, BeanDefinition beanDefinitio
 }
 ```
 
+### 过程总结
+Spring BeanFactory 创建 基本流程就三步
+1、创建 beanFactory 
+2、解析文档生成 beanDefinition
+3、将解析生成的 beanDefinition 放入 map 中保存起来为 bean 的实例化做准备
