@@ -576,6 +576,7 @@ public void registerBeanDefinition(String beanName, BeanDefinition beanDefinitio
 
 ### 过程总结
 Spring BeanFactory 创建 基本流程就三步
-1、创建 beanFactory 
-2、解析文档生成 beanDefinition
-3、将解析生成的 beanDefinition 放入 map 中保存起来为 bean 的实例化做准备
+
+1. 创建 beanFactory 
+2. 解析文档生成 beanDefinition
+3. 将解析生成的 beanDefinition 放入 map 中保存起来为 bean 的实例化做准备
