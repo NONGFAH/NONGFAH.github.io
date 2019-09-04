@@ -26,7 +26,7 @@ layout: default
     <div class="header-mask"></div>
     <div class="container">
         <div class="row">
-            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div class="col-lg-11 col-lg-offset-0 col-md-11 col-md-offset-0">
                 <div class="post-heading">
                     <div class="tags">
                         {% for tag in page.tags %}
@@ -40,7 +40,7 @@ layout: default
                     {% comment %} if page.subtitle {% endcomment %}
                     <h2 class="subheading">{{ page.subtitle }}</h2>
                     {% comment %} endif {% endcomment %}
-                    <span class="meta">Posted by {% if page.author %}{{ page.author }}{% else %}{{ site.title }}{% endif %} on {{ page.date | date: "%B %-d, %Y" }}</span>
+                    <span class="meta">{% if page.author %}{{ page.author }}{% else %}{{ site.title }}{% endif %} 写于 {{ page.date | date: "%Y-%m-%d"}}</span>
                 </div>
             </div>
         </div>
@@ -126,7 +126,7 @@ layout: default
                 <div class="side-catalog">
                     <hr class="hidden-sm hidden-xs">
                     <h5>
-                        <a class="catalog-toggle" href="#">CATALOG</a>
+                        <a class="catalog-toggle" href="#">文章目录</a>
                     </h5>
                     <ul class="catalog-body"></ul>
                 </div>
