@@ -33,3 +33,7 @@ Temporary Items
 
 # debug file
 _site
+
+NONGFAH.github.io.iml
+package-lock.json
+node_modules
